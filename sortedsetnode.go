@@ -31,7 +31,7 @@ type SortedSetLevel struct {
 
 // Node in skip list
 type SortedSetNode struct {
-	key      string      // unique key of this node
+	key      int      // unique key of this node
 	Value    interface{} // associated data
 	score    SCORE       // score to determine the order of this node in the set
 	backward *SortedSetNode
@@ -39,7 +39,7 @@ type SortedSetNode struct {
 }
 
 // Get the key of the node
-func (this *SortedSetNode) Key() string {
+func (this *SortedSetNode) Key() int {
 	return this.key
 }
 
