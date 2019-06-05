@@ -41,7 +41,7 @@ type SortedSet struct {
 	dict   map[int]*SortedSetNode
 }
 
-func createNode(level int, score SCORE, key int, value interface{}) *SortedSetNode {
+func createNode(level int, score int64, key int, value interface{}) *SortedSetNode {
 	node := SortedSetNode{
 		score: score,
 		key:   key,
@@ -67,7 +67,7 @@ func randomLevel() int {
 	return SKIPLIST_MAXLEVEL
 }
 
-func (this *SortedSet) insertNode(score SCORE, key int, value interface{}) *SortedSetNode {
+func (this *SortedSet) insertNode(score int64, key int, value interface{}) *SortedSetNode {
 	var update [SKIPLIST_MAXLEVEL]*SortedSetNode
 	var rank [SKIPLIST_MAXLEVEL]int64
 
@@ -157,7 +157,7 @@ func (this *SortedSet) deleteNode(x *SortedSetNode, update [SKIPLIST_MAXLEVEL]*S
 }
 
 /* Delete an element with matching score/key from the skiplist. */
-func (this *SortedSet) delete(score SCORE, key int) bool {
+func (this *SortedSet) delete(score int64, key int) bool {
 	var update [SKIPLIST_MAXLEVEL]*SortedSetNode
 
 	x := this.header
@@ -235,7 +235,7 @@ func (this *SortedSet) PopMax() *SortedSetNode {
 // if the element is added, this method returns true; otherwise false means updated
 //
 // Time complexity of this method is : O(log(N))
-func (this *SortedSet) AddOrUpdate(key int, score SCORE, value interface{}) bool {
+func (this *SortedSet) AddOrUpdate(key int, score int64, value interface{}) bool {
 	var newNode *SortedSetNode = nil
 
 	found := this.dict[key]
@@ -280,7 +280,7 @@ type GetByScoreRangeOptions struct {
 // If options is nil, it searchs in interval [start, end] without any limit by default
 //
 // Time complexity of this method is : O(log(N))
-func (this *SortedSet) GetByScoreRange(start SCORE, end SCORE, options *GetByScoreRangeOptions) []*SortedSetNode {
+func (this *SortedSet) GetByScoreRange(start int64, end int64, options *GetByScoreRangeOptions) []*SortedSetNode {
 
 	// prepare parameters
 	var limit int = 2147483648
