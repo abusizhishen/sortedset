@@ -41,11 +41,10 @@ type SortedSet struct {
 	dict   map[int]*SortedSetNode
 }
 
-func createNode(level int, score int64, key int, value interface{}) *SortedSetNode {
+func createNode(level int, score int64, key int) *SortedSetNode {
 	node := SortedSetNode{
 		score: score,
 		key:   key,
-		Value: value,
 		level: make([]SortedSetLevel, level),
 	}
 	return &node
@@ -67,7 +66,7 @@ func randomLevel() int {
 	return SKIPLIST_MAXLEVEL
 }
 
-func (this *SortedSet) insertNode(score int64, key int, value interface{}) *SortedSetNode {
+func (this *SortedSet) insertNode(score int64, key int) *SortedSetNode {
 	var update [SKIPLIST_MAXLEVEL]*SortedSetNode
 	var rank [SKIPLIST_MAXLEVEL]int64
 
@@ -105,7 +104,7 @@ func (this *SortedSet) insertNode(score int64, key int, value interface{}) *Sort
 		this.level = level
 	}
 
-	x = createNode(level, score, key, value)
+	x = createNode(level, score, key)
 	for i := 0; i < level; i++ {
 		x.level[i].forward = update[i].level[i].forward
 		update[i].level[i].forward = x
@@ -187,7 +186,7 @@ func New() *SortedSet {
 		level: 1,
 		dict:  make(map[int]*SortedSetNode),
 	}
-	sortedSet.header = createNode(SKIPLIST_MAXLEVEL, 0, 0, nil)
+	sortedSet.header = createNode(SKIPLIST_MAXLEVEL, 0, 0)
 	return &sortedSet
 }
 
@@ -235,20 +234,18 @@ func (this *SortedSet) PopMax() *SortedSetNode {
 // if the element is added, this method returns true; otherwise false means updated
 //
 // Time complexity of this method is : O(log(N))
-func (this *SortedSet) AddOrUpdate(key int, score int64, value interface{}) bool {
+func (this *SortedSet) AddOrUpdate(key int, score int64) bool {
 	var newNode *SortedSetNode = nil
 
 	found := this.dict[key]
 	if found != nil {
 		// score does not change, only update value
-		if found.score == score {
-			found.Value = value
-		} else { // score changes, delete and re-insert
+		if found.score != score {// score changes, delete and re-insert
 			this.delete(found.score, found.key)
-			newNode = this.insertNode(score, key, value)
+			newNode = this.insertNode(score, key)
 		}
 	} else {
-		newNode = this.insertNode(score, key, value)
+		newNode = this.insertNode(score, key)
 	}
 
 	if newNode != nil {
