@@ -26,6 +26,7 @@ package sortedset
 
 import (
 	"math/rand"
+	"sync"
 )
 
 type SCORE int64 // the type of score
@@ -39,6 +40,7 @@ type SortedSet struct {
 	length int64
 	level  int
 	dict   map[int]*SortedSetNode
+	sync.RWMutex
 }
 
 func createNode(level int, score int64, key int) *SortedSetNode {
@@ -252,6 +254,13 @@ func (this *SortedSet) AddOrUpdate(key int, score int64) bool {
 		this.dict[key] = newNode
 	}
 	return found == nil
+}
+
+func (this *SortedSet) Exists(key int) (ok bool) {
+	this.RLock()
+	_,ok = this.dict[key]
+	this.RUnlock()
+	return
 }
 
 // Delete element specified by key
